@@ -1,26 +1,27 @@
 import re
 from flask import Flask, request, jsonify
-from reclip_vercel import extract, format_options
+from reclip_vercel import extract_public_info, format_options
 
 app = Flask(__name__)
 
-
-# Vercel forwards the /api/info path into this Flask application.
-@app.route("/api/info", methods=["POST"])
+@app.route('/', methods=['POST'])
 def info():
     data = request.get_json(silent=True) or {}
-    url = (data.get("url") or "").strip()
-    if not re.match(r"^https?://", url, re.I):
-        return jsonify({"error": "Enter a valid HTTP or HTTPS URL."}), 400
+    url = (data.get('url') or '').strip()
+    if not re.match(r'^https?://', url, re.I):
+        return jsonify({'error': 'Enter a valid HTTP or HTTPS URL.'}), 400
     try:
-        meta = extract(url)
+        meta = extract_public_info(url)
+        if meta.get('downloadable') is False:
+            return jsonify(meta)
         return jsonify({
-            "title": meta.get("title", ""),
-            "thumbnail": meta.get("thumbnail", ""),
-            "duration": meta.get("duration"),
-            "uploader": meta.get("uploader", ""),
-            "webpage_url": meta.get("webpage_url") or url,
-            "formats": format_options(meta),
+            'title': meta.get('title', ''),
+            'thumbnail': meta.get('thumbnail', ''),
+            'duration': meta.get('duration'),
+            'uploader': meta.get('uploader', ''),
+            'webpage_url': meta.get('webpage_url') or url,
+            'formats': format_options(meta),
+            'downloadable': True,
         })
     except Exception as exc:
-        return jsonify({"error": str(exc).split("\n")[-1][:500]}), 400
+        return jsonify({'error': str(exc).split('\n')[-1][:500]}), 400
