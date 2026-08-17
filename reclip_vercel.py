@@ -2,7 +2,7 @@ import os
 import re
 import uuid
 import json
-from urllib.parse import urlparse, quote
+from urllib.parse import urlparse, quote, parse_qs
 from urllib.request import Request, urlopen
 from flask import jsonify, send_file, after_this_request
 import yt_dlp
@@ -17,28 +17,71 @@ def clean_name(value, ext):
     return f"{value}.{ext}"
 
 
+def youtube_video_id(url):
+    try:
+        parsed = urlparse(url)
+        host = (parsed.hostname or '').lower()
+        if host.endswith('youtu.be'):
+            return parsed.path.strip('/').split('/')[0] or None
+        if host.endswith('youtube.com'):
+            values = parse_qs(parsed.query).get('v')
+            if values:
+                return values[0]
+            parts = parsed.path.strip('/').split('/')
+            if len(parts) >= 2 and parts[0] in {'shorts', 'embed', 'live'}:
+                return parts[1]
+    except Exception:
+        pass
+    return None
+
+
 def is_youtube_url(url):
     try:
-        host = (urlparse(url).hostname or '').lower().split('.')
-        return (len(host) >= 2 and host[-2:] == ['youtube', 'com']) or (len(host) >= 2 and host[-2:] == ['youtu', 'be']) or (len(host) >= 3 and host[-3:] == ['youtube', 'nocookie', 'com'])
+        host = (urlparse(url).hostname or '').lower()
+        return host.endswith('youtube.com') or host == 'youtu.be' or host.endswith('.youtube.com')
     except Exception:
         return False
 
 
 def youtube_oembed(url):
     endpoint = 'https://www.youtube.com/oembed?url=' + quote(url, safe='') + '&format=json'
-    req = Request(endpoint, headers={'User-Agent': 'Mozilla/5.0', 'Accept': 'application/json'})
+    req = Request(endpoint, headers={
+        'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/131 Safari/537.36',
+        'Accept': 'application/json',
+    })
     with urlopen(req, timeout=10) as response:
         payload = json.loads(response.read().decode('utf-8'))
+
+    video_id = youtube_video_id(url)
+    thumbnail = payload.get('thumbnail_url', '')
+    if not thumbnail and video_id:
+        thumbnail = f'https://i.ytimg.com/vi/{video_id}/hqdefault.jpg'
+
     return {
-        'title': payload.get('title', ''),
-        'thumbnail': payload.get('thumbnail_url', ''),
+        'title': payload.get('title', '') or 'YouTube video',
+        'thumbnail': thumbnail,
         'uploader': payload.get('author_name', ''),
         'duration': None,
         'webpage_url': url,
         'formats': [],
         'downloadable': False,
         'notice': 'YouTube currently requires additional verification for server-side downloads. ReClip will not ask you for cookies or account access.',
+        'source': 'youtube',
+    }
+
+
+def youtube_fallback(url):
+    video_id = youtube_video_id(url)
+    return {
+        'title': 'YouTube video',
+        'thumbnail': f'https://i.ytimg.com/vi/{video_id}/hqdefault.jpg' if video_id else '',
+        'uploader': '',
+        'duration': None,
+        'webpage_url': url,
+        'formats': [],
+        'downloadable': False,
+        'notice': 'YouTube is currently requiring additional verification for server-side downloads. ReClip keeps your account and cookies out of the process.',
+        'source': 'youtube',
     }
 
 
@@ -65,12 +108,20 @@ def extract_public_info(url):
             return extract(url)
         except Exception as exc:
             message = str(exc).lower()
-            bot_problem = any(token in message for token in ('sign in to confirm', 'not a bot', 'confirm you\'re not a bot', 'cookies-from-browser', 'player webpage'))
+            bot_problem = any(token in message for token in (
+                'sign in to confirm',
+                'not a bot',
+                "confirm you're not a bot",
+                'cookies-from-browser',
+                'cookies for the authentication',
+                'player webpage',
+                'verification',
+            ))
             if bot_problem:
                 try:
                     return youtube_oembed(url)
                 except Exception:
-                    raise RuntimeError('YouTube could not provide download information to this server right now. ReClip does not request your cookies or sign-in details.')
+                    return youtube_fallback(url)
             raise
     return extract(url)
 
@@ -102,7 +153,7 @@ def download_media(url, mode='video', format_id=None, title=''):
 
     if is_youtube_url(url):
         return jsonify({
-            'error': 'YouTube currently requires additional verification for server-side downloads. ReClip does not collect cookies or ask users to sign in.',
+            'error': 'YouTube currently requires additional verification for server-side downloads. ReClip cannot complete this download right now.',
             'code': 'YOUTUBE_VERIFICATION_REQUIRED',
             'open_url': url,
         }), 409
@@ -168,7 +219,12 @@ def download_media(url, mode='video', format_id=None, title=''):
                 pass
             return response
 
-        return send_file(path, as_attachment=True, download_name=filename, mimetype='audio/mpeg' if ext == 'mp3' else 'video/mp4')
+        return send_file(
+            path,
+            as_attachment=True,
+            download_name=filename,
+            mimetype='audio/mpeg' if ext == 'mp3' else 'video/mp4',
+        )
     except Exception as exc:
         for name in list(os.listdir(TMP)):
             if name.startswith(job + '.'):
