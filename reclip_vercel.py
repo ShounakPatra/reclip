@@ -127,17 +127,32 @@ def extract_public_info(url):
 
 
 def format_options(info):
+    # Serverless downloads should only expose formats that already contain
+    # both video and audio. Those formats can be downloaded directly without
+    # a video+audio merge, so FFmpeg is not required for MP4 downloads.
     best = {}
     for f in info.get('formats', []):
         h = f.get('height')
         if not h or f.get('vcodec') in (None, 'none'):
             continue
-        score = (1 if f.get('acodec') not in (None, 'none') else 0, f.get('tbr') or 0)
+        if f.get('acodec') in (None, 'none'):
+            continue
+        ext = (f.get('ext') or '').lower()
+        score = (
+            1 if ext == 'mp4' else 0,
+            f.get('tbr') or 0,
+        )
         if h not in best or score > best[h][0]:
             best[h] = (score, f)
+
     out = []
     for h, (_, f) in sorted(best.items(), reverse=True):
-        out.append({'id': f.get('format_id'), 'label': f'{h}p', 'height': h})
+        out.append({
+            'id': f.get('format_id'),
+            'label': f'{h}p',
+            'height': h,
+            'ext': f.get('ext') or 'mp4',
+        })
     return out[:8]
 
 
@@ -161,15 +176,16 @@ def download_media(url, mode='video', format_id=None, title=''):
     job = uuid.uuid4().hex
     out = os.path.join(TMP, job + '.%(ext)s')
 
-    try:
-        import imageio_ffmpeg
-        ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
-    except Exception as exc:
-        return error_json(RuntimeError(f'FFmpeg is unavailable: {exc}'), 500)
+    ffmpeg = None
+    if mode == 'audio':
+        try:
+            import imageio_ffmpeg
+            ffmpeg = imageio_ffmpeg.get_ffmpeg_exe()
+        except Exception as exc:
+            return error_json(RuntimeError(f'FFmpeg is unavailable for MP3 conversion: {exc}'), 500)
 
     opts = {
         'outtmpl': out,
-        'ffmpeg_location': os.path.dirname(ffmpeg),
         'quiet': True,
         'no_warnings': True,
         'noplaylist': True,
@@ -178,9 +194,13 @@ def download_media(url, mode='video', format_id=None, title=''):
         'fragment_retries': 2,
         'cachedir': False,
         'restrictfilenames': True,
+        'nopart': True,
     }
 
     if mode == 'audio':
+        # Give yt-dlp the exact bundled FFmpeg binary. yt-dlp accepts either
+        # the binary path or its containing directory for --ffmpeg-location.
+        opts['ffmpeg_location'] = ffmpeg
         opts.update({
             'format': 'bestaudio/best',
             'postprocessors': [{
@@ -189,26 +209,39 @@ def download_media(url, mode='video', format_id=None, title=''):
                 'preferredquality': '192',
             }],
         })
-        ext = 'mp3'
+        expected_ext = 'mp3'
     else:
-        opts.update({
-            'format': (f'{format_id}+bestaudio/best' if format_id else 'bestvideo+bestaudio/best'),
-            'merge_output_format': 'mp4',
-        })
-        ext = 'mp4'
+        # format_options() only exposes progressive formats (video+audio),
+        # so downloading the selected format requires no merge step and no
+        # external FFmpeg dependency.
+        opts['format'] = format_id or 'best[ext=mp4][vcodec!=none][acodec!=none]/best[vcodec!=none][acodec!=none]'
+        expected_ext = None
 
-    path = os.path.join(TMP, job + '.' + ext)
     try:
         with yt_dlp.YoutubeDL(opts) as ydl:
-            ydl.download([url])
+            info = ydl.extract_info(url, download=True)
+            requested_ext = expected_ext or info.get('ext') or 'mp4'
 
-        if not os.path.exists(path):
-            matches = [os.path.join(TMP, f) for f in os.listdir(TMP) if f.startswith(job + '.')]
-            if not matches:
-                return error_json(RuntimeError('Download finished but no output file was produced.'), 500)
-            path = matches[0]
+        matches = [
+            os.path.join(TMP, f)
+            for f in os.listdir(TMP)
+            if f.startswith(job + '.') and not f.endswith('.part')
+        ]
+        if not matches:
+            return error_json(RuntimeError('Download finished but no output file was produced.'), 500)
 
-        filename = clean_name(title, ext)
+        path = matches[0]
+        actual_ext = os.path.splitext(path)[1].lstrip('.').lower() or requested_ext
+        filename = clean_name(title, actual_ext)
+
+        mimetypes = {
+            'mp3': 'audio/mpeg',
+            'm4a': 'audio/mp4',
+            'mp4': 'video/mp4',
+            'webm': 'video/webm',
+            'mov': 'video/quicktime',
+            'mkv': 'video/x-matroska',
+        }
 
         @after_this_request
         def cleanup(response):
@@ -223,7 +256,7 @@ def download_media(url, mode='video', format_id=None, title=''):
             path,
             as_attachment=True,
             download_name=filename,
-            mimetype='audio/mpeg' if ext == 'mp3' else 'video/mp4',
+            mimetype=mimetypes.get(actual_ext, 'application/octet-stream'),
         )
     except Exception as exc:
         for name in list(os.listdir(TMP)):
