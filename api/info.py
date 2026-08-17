@@ -5,7 +5,6 @@ from reclip_vercel import extract_public_info, format_options
 app = Flask(__name__)
 
 
-@app.route('/', methods=['POST'])
 def info():
     data = request.get_json(silent=True) or {}
     url = (data.get('url') or '').strip()
@@ -26,6 +25,10 @@ def info():
         }), 200
     except Exception as exc:
         return jsonify({
-            'error': 'ReClip could not read this media source right now. Please try another link.',
+            'error': 'ReClip could not process this media source right now. Please try another link.',
             'detail': str(exc).split('\n')[-1][:300],
         }), 400
+
+
+app.add_url_rule('/', 'info_root', info, methods=['POST'])
+app.add_url_rule('/api/info', 'info_api', info, methods=['POST'])
