@@ -6,13 +6,21 @@
 <meta name="theme-color" content="#f4f1eb">
 <title>ReClip — Free Media Downloader</title>
 <style>
-:root{--bg:#f4f1eb;--fg:#343432;--accent:#e85d2a;--accent2:#d45122;--muted:#969184;--card:#fff;--border:#e2ded6;--soft:#f8f6f2;--ok:#2d8a4e;--bad:#c43d3d;--warn:#8a4d2d;--warn-bg:#fff7f0;--radius:16px;--shadow:0 12px 34px rgba(40,38,32,.05)}
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow-x:hidden}body{background:var(--bg);color:var(--fg);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}body:after{content:"";position:fixed;inset:0;pointer-events:none;opacity:.025;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25'/%3E%3C/svg%3E")}
-.page{width:min(760px,100%);margin:auto;padding:58px 22px 72px}.brand{margin-bottom:38px}.brand h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(3.6rem,10vw,5.7rem);font-weight:400;letter-spacing:-.07em;line-height:.9}.brand h1 em{color:var(--accent);font-style:italic}.brand p{margin:14px 0 0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.input{display:block;width:100%;min-height:128px;padding:18px 19px;border:1.5px solid var(--border);border-radius:var(--radius);background:rgba(255,255,255,.88);box-shadow:var(--shadow);font:14px/1.55 inherit;color:var(--fg);resize:vertical;outline:0}.input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(232,93,42,.08),var(--shadow)}.input::placeholder{color:#aaa49a}.hint{margin:9px 2px 18px;font-size:10px;line-height:1.5;color:var(--muted)}
-.controls{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:stretch}.pills{display:grid;grid-template-columns:1fr 1fr;background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden}.pill{min-width:72px;border:0;background:transparent;color:var(--muted);padding:11px 16px;font:12px inherit;cursor:pointer}.pill.active{background:var(--fg);color:var(--bg)}.fetch{min-height:46px;border:0;border-radius:12px;background:var(--accent);color:#fff;font:12px inherit;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:background .18s,transform .08s}.fetch:hover{background:var(--accent2)}.fetch:active{transform:translateY(1px)}.fetch:disabled{opacity:.55;cursor:wait}
-.cards{margin-top:24px}.card{display:grid;grid-template-columns:minmax(0,160px) minmax(0,1fr);gap:16px;align-items:start;padding:15px;margin:0 0 12px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--card);box-shadow:var(--shadow);overflow:hidden;animation:up .26s ease}.card>div:nth-child(2){min-width:0}.thumb{width:100%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;background:var(--soft);border:1px solid rgba(0,0,0,.03)}.thumb img{display:block;width:100%;height:100%;object-fit:cover}.title{margin:1px 0 6px;font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}.meta{margin-bottom:10px;color:var(--muted);font-size:10px;line-height:1.45;text-transform:uppercase;white-space:normal;overflow-wrap:anywhere}.qualities{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.q{border:1px solid var(--border);background:transparent;border-radius:7px;padding:6px 9px;color:var(--muted);font:10px inherit;cursor:pointer}.q:hover{border-color:#bbb5aa;color:var(--fg)}.q.active{border-color:var(--fg);color:var(--fg);background:rgba(52,52,50,.045)}.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;min-width:0}.download,.source-btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:8px;padding:9px 13px;font:10px inherit;font-weight:500;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;cursor:pointer;white-space:nowrap}.download{background:var(--fg);color:var(--bg)}.download:hover{background:#262624}.download:disabled{opacity:.5;cursor:wait}.source-btn{background:var(--accent);color:#fff}.source-btn:hover{background:var(--accent2)}.status{min-width:0;color:var(--muted);font-size:10px;line-height:1.4;overflow-wrap:anywhere}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}.notice{display:flex;gap:9px;align-items:flex-start;padding:11px 12px;margin:0 0 10px;border:1px solid #efd4c0;background:var(--warn-bg);border-radius:10px;color:var(--warn);font-size:10px;line-height:1.55;overflow-wrap:anywhere}.notice-dot{width:7px;height:7px;margin-top:4px;border-radius:50%;background:var(--accent);flex:none}.error{padding:2px 0;color:var(--bad);font-size:11px;line-height:1.55;overflow-wrap:anywhere}.loading{display:inline-block;width:10px;height:10px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .6s linear infinite;vertical-align:-1px;margin-right:5px}.footer{text-align:center;color:var(--muted);font-size:9px;line-height:1.9;margin-top:42px;letter-spacing:.04em;text-transform:uppercase}@keyframes spin{to{transform:rotate(360deg)}}@keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-@media(max-width:640px){.page{padding:38px 14px 58px}.brand{margin-bottom:30px}.controls{grid-template-columns:1fr}.pills{width:100%}.fetch{width:100%}.card{grid-template-columns:1fr;gap:12px}.thumb{aspect-ratio:16/9}.title{font-size:18px}.actions{align-items:stretch}.download,.source-btn{flex:none}.status{flex:1}}
+:root{--bg:#f4f1eb;--fg:#353532;--accent:#e85d2a;--accent2:#d45122;--muted:#999286;--card:#fff;--border:#e2ded6;--soft:#f8f6f2;--ok:#2d8a4e;--bad:#c43d3d;--warn:#8a4d2d;--warnbg:#fff7f0;--radius:16px}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;overflow-x:hidden}
+body{background:var(--bg);color:var(--fg);font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+.page{width:min(760px,100%);margin:auto;padding:56px 22px 72px}
+.brand{margin-bottom:36px}.brand h1{margin:0;font-family:Georgia,"Times New Roman",serif;font-size:clamp(3.5rem,10vw,5.6rem);font-weight:400;letter-spacing:-.07em;line-height:.9}.brand h1 em{color:var(--accent);font-style:italic}.brand p{margin:14px 0 0;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.input{display:block;width:100%;min-height:126px;padding:18px 19px;border:1.5px solid var(--border);border-radius:var(--radius);background:rgba(255,255,255,.9);font:14px/1.55 inherit;color:var(--fg);resize:vertical;outline:0;box-shadow:0 10px 30px rgba(40,38,32,.04)}
+.input:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(232,93,42,.08),0 10px 30px rgba(40,38,32,.04)}
+.hint{margin:9px 2px 18px;font-size:10px;line-height:1.5;color:var(--muted)}
+.controls{display:grid;grid-template-columns:auto minmax(0,1fr);gap:10px;align-items:stretch}.pills{display:grid;grid-template-columns:1fr 1fr;background:var(--card);border:1.5px solid var(--border);border-radius:12px;overflow:hidden}.pill{min-width:78px;border:0;background:transparent;color:var(--muted);padding:11px 16px;font:12px inherit;cursor:pointer}.pill.active{background:var(--fg);color:var(--bg)}
+.fetch{min-height:46px;border:0;border-radius:12px;background:var(--accent);color:#fff;font:12px inherit;font-weight:500;letter-spacing:.06em;text-transform:uppercase;cursor:pointer}.fetch:hover{background:var(--accent2)}.fetch:disabled{opacity:.55;cursor:wait}
+.cards{margin-top:24px}.card{display:grid;grid-template-columns:160px minmax(0,1fr);gap:16px;align-items:start;padding:15px;margin:0 0 12px;border:1.5px solid var(--border);border-radius:var(--radius);background:var(--card);box-shadow:0 10px 30px rgba(40,38,32,.04);overflow:hidden}.card-main{min-width:0}.thumb{width:100%;aspect-ratio:16/10;border-radius:10px;overflow:hidden;background:var(--soft);border:1px solid rgba(0,0,0,.03)}.thumb img{display:block;width:100%;height:100%;object-fit:cover}
+.title{margin:1px 0 6px;font-family:Georgia,"Times New Roman",serif;font-size:19px;line-height:1.18;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}.meta{margin-bottom:10px;color:var(--muted);font-size:10px;line-height:1.45;text-transform:uppercase;overflow-wrap:anywhere}.qualities{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}.q{border:1px solid var(--border);background:transparent;border-radius:7px;padding:6px 9px;color:var(--muted);font:10px inherit;cursor:pointer}.q.active{border-color:var(--fg);color:var(--fg);background:rgba(52,52,50,.045)}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.download,.source-btn{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:8px;padding:9px 13px;font:10px inherit;font-weight:500;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;cursor:pointer;white-space:nowrap}.download{background:var(--fg);color:var(--bg)}.source-btn{background:var(--accent);color:#fff}.download:disabled{opacity:.5;cursor:wait}.status{color:var(--muted);font-size:10px;line-height:1.4;overflow-wrap:anywhere}.status.ok{color:var(--ok)}.status.bad{color:var(--bad)}
+.notice{display:flex;gap:9px;align-items:flex-start;padding:11px 12px;margin:0 0 10px;border:1px solid #efd4c0;background:var(--warnbg);border-radius:10px;color:var(--warn);font-size:10px;line-height:1.55;overflow-wrap:anywhere}.notice-dot{width:7px;height:7px;margin-top:4px;border-radius:50%;background:var(--accent);flex:none}.error{color:var(--bad);font-size:11px;line-height:1.55;overflow-wrap:anywhere}.loading{display:inline-block;width:10px;height:10px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:spin .6s linear infinite;vertical-align:-1px;margin-right:5px}.footer{text-align:center;color:var(--muted);font-size:9px;line-height:1.9;margin-top:42px;letter-spacing:.04em;text-transform:uppercase}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:640px){.page{padding:38px 14px 58px}.controls{grid-template-columns:1fr}.pills{width:100%}.fetch{width:100%}.card{grid-template-columns:1fr;gap:12px}.thumb{aspect-ratio:16/9}.title{font-size:18px}}
 </style>
 </head>
 <body>
@@ -20,24 +28,141 @@
 <section class="brand"><h1>Re<em>Clip</em></h1><p>Free media downloader</p></section>
 <textarea id="urls" class="input" rows="4" placeholder="Paste one or more URLs..."></textarea>
 <div class="hint">Multiple links: separate with spaces, commas, or new lines. Up to 10 links per batch.</div>
-<div class="controls"><div class="pills"><button class="pill active" data-format="video">MP4</button><button class="pill" data-format="audio">MP3</button></div><button id="fetch" class="fetch">Fetch media</button></div>
+<div class="controls">
+<div class="pills"><button type="button" class="pill active" data-format="video">MP4</button><button type="button" class="pill" data-format="audio">MP3</button></div>
+<button type="button" id="fetch" class="fetch">Fetch media</button>
+</div>
 <div id="cards" class="cards"></div>
 <div class="footer">YouTube · TikTok · Instagram · Twitter/X · Reddit · Facebook<br>Vimeo · Twitch · Dailymotion · SoundCloud · Loom · Streamable<br>Pinterest · Tumblr · Threads · LinkedIn · 1000+ more</div>
 </main>
 <script>
-let mode='video';const $=s=>document.querySelector(s),cards=$('#cards'),urls=$('#urls');
-document.querySelectorAll('.pill').forEach(b=>b.onclick=()=>{document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));b.classList.add('active');mode=b.dataset.format});
-function parse(){return[...new Set(urls.value.split(/[\s,]+/).map(x=>x.trim()).filter(x=>/^https?:\/\//i.test(x)))].slice(0,10)}
-function esc(s){const d=document.createElement('div');d.textContent=s??'';return d.innerHTML}function dur(s){if(!s)return'';s=Math.floor(s);return`${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`}
-function loading(u){const d=document.createElement('div');d.className='card';d.innerHTML=`<div class="thumb"></div><div><div class="title">Fetching media…</div><div class="meta">${esc(u)}</div><div class="status"><span class="loading"></span>Reading public media information</div></div>`;cards.appendChild(d);return d}
-async function info(u){const r=await fetch('/api/info',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({url:u})});const text=await r.text();let j=null;try{j=JSON.parse(text)}catch{}if(!r.ok)throw Error(j?.error||`ReClip couldn't process this link (HTTP ${r.status}).`);if(!j)throw Error('ReClip received an invalid server response. Please try again.');return j}
-function card(data){const d=document.createElement('div');d.className='card';const qs=(data.formats||[]).map((f,i)=>`<button class="q ${i?'':'active'}" data-id="${esc(f.id)}">${esc(f.label)}</button>`).join('');const thumb=data.thumbnail?`<img src="${esc(data.thumbnail)}" alt="">`:'';const meta=`${esc(data.uploader||'')}${data.duration?' · '+dur(data.duration):''}`;
-if(data.downloadable===false){d.innerHTML=`<div class="thumb">${thumb}</div><div><div class="title">${esc(data.title||'Media source')}</div><div class="meta">${meta||'YouTube'}</div><div class="notice"><span class="notice-dot"></span><div>${esc(data.notice||'This source currently requires additional verification for server-side downloads.')}</div></div><div class="actions"><a class="source-btn" href="${esc(data.webpage_url||'#')}" target="_blank" rel="noopener noreferrer">Open on YouTube</a><span class="status">Watch or download from the source page.</span></div></div>`;return d}
-d.innerHTML=`<div class="thumb">${thumb}</div><div><div class="title" title="${esc(data.title||'Untitled')}">${esc(data.title||'Untitled')}</div><div class="meta">${meta}</div><div class="qualities">${qs||'<span class="status">Best available quality</span>'}</div><div class="actions"><button class="download">Download</button><span class="status"></span></div></div>`;
-d.querySelectorAll('.q').forEach(q=>q.onclick=()=>{d.querySelectorAll('.q').forEach(x=>x.classList.remove('active'));q.classList.add('active')});
-const b=d.querySelector('.download');b.onclick=async()=>{const st=d.querySelector('.status'),q=d.querySelector('.q.active');b.disabled=true;st.textContent='Preparing…';st.className='status';try{const r=await fetch('/api/download',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({url:data.webpage_url,format:mode,format_id:q?.dataset.id||null,title:data.title||''})});const ct=r.headers.get('content-type')||'';const text=!ct.includes('video')&&!ct.includes('audio')&&!ct.includes('octet-stream')?await r.text():null;let j=null;try{if(text)j=JSON.parse(text)}catch{}if(!r.ok)throw Error(j?.error||`Download failed (HTTP ${r.status}).`);if(!ct.includes('video')&&!ct.includes('audio')&&!ct.includes('octet-stream'))throw Error('The server did not return a media file.');const blob=await r.blob(),a=document.createElement('a');a.href=URL.createObjectURL(blob);const clean=(data.title||'reclip').replace(/[^a-z0-9 _.-]/gi,'').slice(0,80)||'reclip';a.download=clean+(mode==='audio'?'.mp3':'.mp4');document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),2000);b.textContent='Done';st.textContent='Downloaded';st.className='status ok'}catch(e){st.textContent=e.message;st.className='status bad';b.textContent='Retry'}finally{b.disabled=false}};return d}
-async function go(){const list=parse();if(!list.length){urls.focus();return}$('#fetch').disabled=true;$('#fetch').innerHTML='<span class="loading"></span> Fetching';cards.innerHTML='';for(const u of list){const l=loading(u);try{const data=await info(u);l.replaceWith(card(data))}catch(e){l.innerHTML=`<div class="thumb"></div><div><div class="error">${esc(e.message)}</div><div class="meta">${esc(u)}</div></div>`}}$('#fetch').disabled=false;$('#fetch').textContent='Fetch media'}
-$('#fetch').onclick=go;urls.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter')go()});
+(function(){
+'use strict';
+var mode='video';
+var urls=document.getElementById('urls');
+var cards=document.getElementById('cards');
+var fetchButton=document.getElementById('fetch');
+var pills=document.querySelectorAll('.pill');
+
+for(var i=0;i<pills.length;i++){
+  pills[i].addEventListener('click',function(){
+    for(var j=0;j<pills.length;j++){pills[j].classList.remove('active');}
+    this.classList.add('active');
+    mode=this.getAttribute('data-format')||'video';
+  });
+}
+
+function escapeHtml(value){
+  var div=document.createElement('div');
+  div.textContent=value==null?'':String(value);
+  return div.innerHTML;
+}
+function durationText(value){
+  if(!value)return '';
+  var seconds=Math.floor(Number(value));
+  return Math.floor(seconds/60)+':'+String(seconds%60).padStart(2,'0');
+}
+function parseUrls(){
+  var raw=urls.value.split(/[\s,]+/);
+  var result=[];
+  var seen={};
+  for(var i=0;i<raw.length;i++){
+    var u=raw[i].trim();
+    if(!/^https?:\/\//i.test(u) || seen[u])continue;
+    seen[u]=true; result.push(u);
+    if(result.length===10)break;
+  }
+  return result;
+}
+function showLoading(u){
+  var d=document.createElement('div');
+  d.className='card';
+  d.innerHTML='<div class="thumb"></div><div class="card-main"><div class="title">Fetching media...</div><div class="meta">'+escapeHtml(u)+'</div><div class="status"><span class="loading"></span>Reading media information</div></div>';
+  cards.appendChild(d);
+  return d;
+}
+async function getInfo(url){
+  var response=await fetch('/api/info',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:url})});
+  var text=await response.text();
+  var data=null;
+  try{data=JSON.parse(text);}catch(e){}
+  if(!response.ok){throw new Error(data&&data.error?data.error:'ReClip could not process this link (HTTP '+response.status+').');}
+  if(!data){throw new Error('ReClip received an invalid server response. Please try again.');}
+  return data;
+}
+function buildCard(data){
+  var card=document.createElement('div');
+  card.className='card';
+  var thumb=data.thumbnail?'<img src="'+escapeHtml(data.thumbnail)+'" alt="">':'';
+  var meta=(data.uploader?escapeHtml(data.uploader):'')+(data.duration?' · '+durationText(data.duration):'');
+  var main=document.createElement('div');
+  main.className='card-main';
+  var title=document.createElement('div'); title.className='title'; title.textContent=data.title||'Untitled';
+  var metaEl=document.createElement('div'); metaEl.className='meta'; metaEl.innerHTML=meta;
+  main.appendChild(title); main.appendChild(metaEl);
+  if(data.downloadable===false){
+    var notice=document.createElement('div'); notice.className='notice';
+    notice.innerHTML='<span class="notice-dot"></span><div>'+escapeHtml(data.notice||'YouTube currently requires additional verification for server-side downloads.')+'</div>';
+    main.appendChild(notice);
+    var actions=document.createElement('div'); actions.className='actions';
+    var source=document.createElement('a'); source.className='source-btn'; source.href=data.webpage_url||'#'; source.target='_blank'; source.rel='noopener noreferrer'; source.textContent='Open on YouTube';
+    var status=document.createElement('span'); status.className='status'; status.textContent='Download is unavailable for this source right now.';
+    actions.appendChild(source); actions.appendChild(status); main.appendChild(actions);
+  }else{
+    var formats=document.createElement('div'); formats.className='qualities';
+    var list=data.formats||[];
+    for(var i=0;i<list.length;i++){
+      var q=document.createElement('button'); q.type='button'; q.className='q'+(i===0?' active':''); q.textContent=list[i].label; q.setAttribute('data-id',list[i].id||'');
+      q.addEventListener('click',function(){var all=formats.querySelectorAll('.q');for(var k=0;k<all.length;k++)all[k].classList.remove('active');this.classList.add('active');});
+      formats.appendChild(q);
+    }
+    if(!list.length){var noQ=document.createElement('span');noQ.className='status';noQ.textContent='Best available quality';formats.appendChild(noQ);}
+    main.appendChild(formats);
+    var actions2=document.createElement('div');actions2.className='actions';
+    var download=document.createElement('button');download.type='button';download.className='download';download.textContent='Download';
+    var downloadStatus=document.createElement('span');downloadStatus.className='status';
+    download.addEventListener('click',async function(){
+      download.disabled=true; downloadStatus.className='status'; downloadStatus.textContent='Preparing...';
+      var active=formats.querySelector('.q.active');
+      try{
+        var response=await fetch('/api/download',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:data.webpage_url,format:mode,format_id:active?active.getAttribute('data-id'):null,title:data.title||''})});
+        var contentType=response.headers.get('content-type')||'';
+        if(!response.ok){var body=await response.text();var errorData=null;try{errorData=JSON.parse(body);}catch(e){}throw new Error(errorData&&errorData.error?errorData.error:'Download failed (HTTP '+response.status+').');}
+        if(contentType.indexOf('video')===-1&&contentType.indexOf('audio')===-1&&contentType.indexOf('octet-stream')===-1){throw new Error('The server did not return a media file.');}
+        var blob=await response.blob();
+        var link=document.createElement('a');
+        link.href=URL.createObjectURL(blob);
+        var clean=(data.title||'reclip').replace(/[^a-z0-9 _.-]/gi,'').slice(0,80)||'reclip';
+        link.download=clean+(mode==='audio'?'.mp3':'.mp4');
+        document.body.appendChild(link); link.click(); link.remove();
+        setTimeout(function(){URL.revokeObjectURL(link.href);},2000);
+        download.textContent='Done'; downloadStatus.className='status ok'; downloadStatus.textContent='Downloaded';
+      }catch(error){download.textContent='Retry';downloadStatus.className='status bad';downloadStatus.textContent=error&&error.message?error.message:'Download failed.';}
+      download.disabled=false;
+    });
+    actions2.appendChild(download); actions2.appendChild(downloadStatus); main.appendChild(actions2);
+  }
+  var thumbWrap=document.createElement('div');thumbWrap.className='thumb';thumbWrap.innerHTML=thumb;
+  card.appendChild(thumbWrap);card.appendChild(main);
+  return card;
+}
+async function runFetch(){
+  var list=parseUrls();
+  if(!list.length){urls.focus();return;}
+  fetchButton.disabled=true;
+  fetchButton.textContent='Fetching...';
+  cards.innerHTML='';
+  for(var i=0;i<list.length;i++){
+    var loader=showLoading(list[i]);
+    try{var data=await getInfo(list[i]);loader.replaceWith(buildCard(data));}
+    catch(error){loader.innerHTML='<div class="thumb"></div><div class="card-main"><div class="error">'+escapeHtml(error&&error.message?error.message:'Unable to process this link.')+'</div><div class="meta">'+escapeHtml(list[i])+'</div></div>';}
+  }
+  fetchButton.disabled=false;
+  fetchButton.textContent='Fetch media';
+}
+fetchButton.addEventListener('click',runFetch);
+urls.addEventListener('keydown',function(event){if((event.ctrlKey||event.metaKey)&&event.key==='Enter'){event.preventDefault();runFetch();}});
+})();
 </script>
 </body>
 </html>
