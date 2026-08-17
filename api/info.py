@@ -4,6 +4,7 @@ from reclip_vercel import extract_public_info, format_options
 
 app = Flask(__name__)
 
+
 @app.route('/', methods=['POST'])
 def info():
     data = request.get_json(silent=True) or {}
@@ -13,7 +14,7 @@ def info():
     try:
         meta = extract_public_info(url)
         if meta.get('downloadable') is False:
-            return jsonify(meta)
+            return jsonify(meta), 200
         return jsonify({
             'title': meta.get('title', ''),
             'thumbnail': meta.get('thumbnail', ''),
@@ -22,6 +23,9 @@ def info():
             'webpage_url': meta.get('webpage_url') or url,
             'formats': format_options(meta),
             'downloadable': True,
-        })
+        }), 200
     except Exception as exc:
-        return jsonify({'error': str(exc).split('\n')[-1][:500]}), 400
+        return jsonify({
+            'error': 'ReClip could not read this media source right now. Please try another link.',
+            'detail': str(exc).split('\n')[-1][:300],
+        }), 400
