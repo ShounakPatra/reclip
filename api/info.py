@@ -5,9 +5,8 @@ from reclip_vercel import extract, format_options
 app = Flask(__name__)
 
 
-# Vercel maps /api/info to this Python function and presents the function
-# with its local root path, so Flask handles the request at "/".
-@app.route("/", methods=["POST"])
+# Vercel forwards the /api/info path into this Flask application.
+@app.route("/api/info", methods=["POST"])
 def info():
     data = request.get_json(silent=True) or {}
     url = (data.get("url") or "").strip()
